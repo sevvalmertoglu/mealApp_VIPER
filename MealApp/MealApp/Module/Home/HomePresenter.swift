@@ -1,63 +1,52 @@
 //
-//  HomeViewModel.swift
+//  HomePresenter.swift
 //  MealApp
 //
-//  Created by Şevval Mertoğlu on 19.02.2024.
+//  Created by Şevval Mertoğlu on 3.03.2024.
 //
 
 import Foundation
-import CoreApi
 
-extension HomeViewModel {
+// ViewController ->HomePresenterInterface
+
+protocol HomePresenterInterface {
+    //View'in erişmesini istediğimiz metotları(fonksiyonları) protocol'e açacağız
+    var numberOfItems: Int { get }
+    var cellPadding: Double { get }
+    
+    func viewDidLoad()
+    func restaurant(_ index: Int) -> Restaurant?
+    func calculateCellSize(collectionViewWidth: Double) -> (width: Double, height: Double)
+    func pullToRefresh()
+    func willDisplay(_ index: Int)
+}
+
+extension HomePresenter {
     fileprivate enum Constants {
         static let cellLeftPadding: Double = 15
         static let cellRightPadding: Double = 15
         static let firstPageHref: String = "page=1"
         static let cellBannerImageViewAspectRatio: Double = 130/345
         static let cellDescriptionViewHeight: Double = 60
-
-
     }
 }
 
-protocol HomeViewModelProtocol { //Haberleşmeleri için Protocol oluşturduk
-    var delegate: HomeViewModelDelegate? { get set }
-    var numberOfItems: Int { get }
-    var cellPadding: Double { get }
+
+final class HomePresenter {
+    weak var view: HomeViewInterface?
     
-    func load()
-    func restaurant(_ index: Int) -> Restaurant?
-    func calculateCellSize(collectionViewWidth: Double) -> (width: Double, height: Double)
-    func pullToRefresh()
-    func willDisplay(_ index: Int)
-    
-}
-
-protocol HomeViewModelDelegate: AnyObject {
-    func showLoadingView()
-    func hideLoadingView()
-    func reloadData()
-    func endRefreshing()
-    func prepareCollectionView()
-    func addRefreshControl()
-
-}
-
-final class HomeViewModel {
     private var widgets: [Widget] = [] //Tüm data işlemleri sadece burada olacak
-    let networkManager: NetworkManager<HomeEndpointItem>
-    weak var delegate: HomeViewModelDelegate?
     private var shouldFetchNextPage: Bool = true
     private var href: String = Constants.firstPageHref
-
-    init(networkManager: NetworkManager<HomeEndpointItem>) {
-        self.networkManager = networkManager
+    
+    init(view: HomeViewInterface? = nil) {
+        self.view = view
     }
     
-    
     private func fetchWidgets(query: String) {
-        delegate?.showLoadingView()
-        networkManager.request(endpoint: .homepage(query: query), type: HomeResponse.self) { [weak self] result in
+        view?.showLoadingView()
+        
+       /* networkManager.request(endpoint: .homepage(query: query), type: HomeResponse.self) { [weak self] result in
             self?.delegate?.hideLoadingView()
             switch result {
             case .success(let response):
@@ -78,11 +67,14 @@ final class HomeViewModel {
                 print(error)
                 break
             }
-        }
+        }*/
     }
+
+
+    
 }
 
-extension HomeViewModel: HomeViewModelProtocol {
+extension HomePresenter: HomePresenterInterface {
     var cellPadding: Double {
         Constants.cellLeftPadding
     }
@@ -104,9 +96,9 @@ extension HomeViewModel: HomeViewModelProtocol {
         widgets.count
     }
     
-    func load() {
-        delegate?.prepareCollectionView()
-        delegate?.addRefreshControl()
+    func viewDidLoad() {
+        view?.prepareCollectionView()
+        view?.addRefreshControl()
         fetchWidgets(query: href)
         
     }
@@ -122,6 +114,4 @@ extension HomeViewModel: HomeViewModelProtocol {
         return (width: cellWidth, height: Constants.cellDescriptionViewHeight + bannerImageHeight)
     }
     
-    
 }
-   
