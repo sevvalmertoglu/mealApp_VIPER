@@ -34,40 +34,20 @@ extension HomePresenter {
 
 final class HomePresenter {
     weak var view: HomeViewInterface?
+    private let interactor: HomeInteractorInterface
     
     private var widgets: [Widget] = [] //Tüm data işlemleri sadece burada olacak
     private var shouldFetchNextPage: Bool = true
     private var href: String = Constants.firstPageHref
     
-    init(view: HomeViewInterface? = nil) {
+    init(view: HomeViewInterface?, interactor: HomeInteractorInterface) {
         self.view = view
+        self.interactor = interactor
     }
     
     private func fetchWidgets(query: String) {
         view?.showLoadingView()
-        
-       /* networkManager.request(endpoint: .homepage(query: query), type: HomeResponse.self) { [weak self] result in
-            self?.delegate?.hideLoadingView()
-            switch result {
-            case .success(let response):
-                if let widgets = response.widgets {
-                    if query == Constants.firstPageHref {
-                        self?.widgets = widgets
-                    }else {
-                        self?.shouldFetchNextPage = !widgets.isEmpty
-                        self?.widgets.append(contentsOf: widgets)
-                    }
-                } else {
-                    self?.shouldFetchNextPage = false
-                }
-                self?.href = response.href ?? ""
-                self?.delegate?.reloadData()
-                self?.delegate?.endRefreshing()
-            case .failure(let error):
-                print(error)
-                break
-            }
-        }*/
+        interactor.fetchWidgets(query: query)
     }
 
 
@@ -113,5 +93,32 @@ extension HomePresenter: HomePresenterInterface {
         
         return (width: cellWidth, height: Constants.cellDescriptionViewHeight + bannerImageHeight)
     }
+    
+}
+
+extension HomePresenter: HomeInteractorOutput {
+    func handleWidgetResult(result: WidgetResult, query: String) {
+        view?.hideLoadingView()
+        switch result {
+        case .success(let response):
+            if let widgets = response.widgets {
+                if query == Constants.firstPageHref {
+                    self.widgets = widgets
+                }else {
+                    shouldFetchNextPage = !widgets.isEmpty
+                    self.widgets.append(contentsOf: widgets)
+                }
+            } else {
+                shouldFetchNextPage = false
+            }
+            href = response.href ?? ""
+            view?.reloadData()
+            view?.endRefreshing()
+        case .failure(let error):
+            print(error)
+            break
+        }
+    }
+    
     
 }

@@ -41,6 +41,7 @@ class HomeViewController: UIViewController, LoadingShowable {
 
 }
 
+//MARK: -  UICollectionViewDataSource
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         presenter.numberOfItems
@@ -58,7 +59,7 @@ extension HomeViewController: UICollectionViewDataSource {
     
     
 }
-
+//MARK: -  UICollectionViewDelegateFlowLayout
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let size = presenter.calculateCellSize(collectionViewWidth: Double(collectionView.frame.size.width))
@@ -71,7 +72,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     
 }
-
+//MARK: -  UICollectionViewDelegate
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         presenter.willDisplay(indexPath.item)
@@ -79,7 +80,7 @@ extension HomeViewController: UICollectionViewDelegate {
         
     }
 }
-
+//MARK: -  HomeViewInterface
 extension HomeViewController: HomeViewInterface {
     func showLoadingView() {
         showLoading()
