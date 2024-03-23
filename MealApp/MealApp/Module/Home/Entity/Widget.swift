@@ -7,6 +7,8 @@
 
 import Foundation
 
+//Entity: modelimiz
+
 // MARK: - Widget
 struct HomeResponse: Decodable {
     let widgets: [Widget]?

@@ -8,6 +8,7 @@
 import Foundation
 import CoreApi
 
+//Interactor'da servis çağrıları bulunur
 // HomePresenter -> HomeInteractorInterface
 protocol HomeInteractorInterface {
     //Presenter'ın Interactor'dan erişmesini istediğimiz metotları yazacağız

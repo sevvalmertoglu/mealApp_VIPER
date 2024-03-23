@@ -10,6 +10,8 @@ import CoreApi
 
 // HomePresenter -> HomeViewInterface 
 
+// ViewController'da UI işlemleri bulunur
+
 protocol HomeViewInterface: AnyObject {
     //Presenter'ın View'e erişmesini istediğimiz metotları açacağız
     func showLoadingView()
@@ -25,9 +27,7 @@ class HomeViewController: UIViewController, LoadingShowable {
     @IBOutlet private weak var restaurantsCollectionView: UICollectionView!
     
     var presenter: HomePresenterInterface!
-    
-  
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter.viewDidLoad()

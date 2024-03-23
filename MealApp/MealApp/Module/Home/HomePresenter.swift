@@ -7,6 +7,8 @@
 
 import Foundation
 
+// Presenter'da Logic işlemler bulunur
+
 // ViewController ->HomePresenterInterface
 
 protocol HomePresenterInterface {
