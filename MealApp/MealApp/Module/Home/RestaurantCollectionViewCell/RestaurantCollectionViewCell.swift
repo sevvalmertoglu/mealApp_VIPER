@@ -8,6 +8,21 @@
 import UIKit
 import SDWebImage
 
+// presenter -> RestaurantCollectionViewCellInterface (presenter'ın erişmesini istediklerimizi burada tanımlayacağız)
+protocol RestaurantCollectionViewCellInterface: AnyObject {
+    func prepareShadow()
+    func setTitleLabel(_ text:String)
+    func prepareBannerImage(with url: URL)
+    func prepareRating(rating: Double, ratingBackgroundColor: String)
+    func prepareRatingVisibility(isHidden: Bool)
+    func prepareCampaingView(campaingText: String)
+    func prepareCampaignViewVisibility(isHidden: Bool)
+    func prepareStatusView()
+    func prepareStatusViewVisibility(isHidden: Bool)
+    func setOpenDescriptionView(averageDeliveryInterval:String,minBasketPrice: String,kitchen:String)
+    func setClosedDescriptionView(workingHours:String,kitchen:String)
+}
+
 extension RestaurantCollectionViewCell {
     fileprivate enum Constants {
         enum Shadow {
@@ -39,10 +54,9 @@ final class RestaurantCollectionViewCell: UICollectionViewCell {
     @IBOutlet private weak var statusView: StampView!
     @IBOutlet private weak var descriptonLabel: UILabel!
 
-    var viewModel: RestaurantCollectionViewCellViewModelProtocol! {
+    var presenter: RestaurantCollectionCellPresenterInterface! {
         didSet {
-            viewModel.delegate = self
-            viewModel.load()
+            presenter.load()
         }
     }
     
@@ -66,7 +80,7 @@ final class RestaurantCollectionViewCell: UICollectionViewCell {
     
     
 }
-extension RestaurantCollectionViewCell: RestaurantCollectionViewCellViewModelDelegate {
+extension RestaurantCollectionViewCell: RestaurantCollectionViewCellInterface{
     
     func prepareShadow() {
         layer.shadowColor = UIColor.lightGray.cgColor

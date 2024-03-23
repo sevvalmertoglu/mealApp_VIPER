@@ -51,7 +51,7 @@ extension HomeViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeCell(cellType: RestaurantCollectionViewCell.self, indexPath: indexPath)
         //cell configure
         if let restaurant = presenter.restaurant(indexPath.item) {
-            cell.viewModel = RestaurantCollectionViewCellViewModel(restaurant: restaurant)
+            cell.presenter = RestaurantCollectionCellPresenter(view: cell, restaurant: restaurant)
         }
         
         return cell
